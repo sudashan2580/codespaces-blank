@@ -1,13 +1,13 @@
-import {connect} from '@dbconfig/dbconfig'
-import User from '@/models/userModel'
-import {NextRequest,NextResponse} from 'next/server'
+import {connect} from '/workspaces/codespaces-blank/my-app/src/dbconfig/dbconfig.js'
+import User from '/workspaces/codespaces-blank/my-app/src/models/userModel.js'
 import bcryptjs from 'bcrypt'
-import {sendEmail} from '@/helpers/mailer'
+import {sendEmail} from '/workspaces/codespaces-blank/my-app/src/helper/mailer.js'
+import { NextResponse } from 'next/server';
 
 connect();
-export async function POST(request){
+export async function POST(req){
 try{
-const reqBody=request.json()
+const reqBody=await req.json()
 const{username,email,password}=reqBody;
 //validation
 console.log(reqBody);
@@ -22,8 +22,8 @@ const user = await User.findOne({email})
     })
     const savedUser=await newUser.save()
     console.log(savedUser);
+    sendEmail({email,emailType:"VERIFY",userId:savedUser._id})   
     //send verification email
-await sendEmail({email,emailType:"VERIFY",userId:savedUser._id});
 return NextResponse.json({
     message:"Sucessfull",
     sucess:true,
