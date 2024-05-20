@@ -7,10 +7,14 @@ import { getDatafromToken } from '../../../../helper/getDatafromToken';
 
 connect();
 export async function POST(req){
-const userId=await getDatafromToken(req)
-const user=User.findOne({_id:userId}).select("-password")
-return NextResponse.json({
-    message:"Userfound",
-    data:user
-})
+try {
+    const userId=await getDatafromToken(req)
+    const user=await User.findOne({_id:userId}).select("-password")
+    return NextResponse.json({
+        message:"Userfound",
+        data:user
+    })
+} catch (error) {
+    return NextResponse.json({error:error.message})
+}
 }
